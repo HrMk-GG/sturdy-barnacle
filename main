@@ -1,0 +1,86 @@
+-- Load Rayfield
+local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/XYZ/Rayfield/main/source.lua"))()
+
+-- Create Window
+local Window = Rayfield:CreateWindow({
+    Name = "HrMkHubV4",
+    LoadingTitle = "HrMkHubV4 Loading...",
+    LoadingSubtitle = "Please wait...",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "HrMkHubV4",
+        FileName = "Config"
+    }
+})
+
+-- Main Tab
+local MainTab = Window:CreateTab("Main", 4483362458)
+
+-- Character Section
+MainTab:CreateSection("Character Settings")
+
+-- Walk Speed Slider
+MainTab:CreateSlider({
+    Name = "Walk Speed",
+    Range = {16, 100},
+    Increment = 1,
+    Suffix = " studs/s",
+    CurrentValue = 16,
+    Flag = "WalkSpeed",
+    Callback = function(value)
+        local player = game.Players.LocalPlayer
+        if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.WalkSpeed = value
+        end
+    end
+})
+
+-- Jump Power Slider
+MainTab:CreateSlider({
+    Name = "Jump Power",
+    Range = {50, 200},
+    Increment = 1,
+    Suffix = " studs",
+    CurrentValue = 50,
+    Flag = "JumpPower",
+    Callback = function(value)
+        local player = game.Players.LocalPlayer
+        if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.JumpPower = value
+        end
+    end
+})
+
+-- Kill Everyone Button (自作ゲーム用)
+MainTab:CreateButton({
+    Name = "Kill Everyone",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        for _, p in pairs(game.Players:GetPlayers()) do
+            if p ~= player and p.Character and p.Character:FindFirstChild("Humanoid") then
+                p.Character.Humanoid.Health = 0 -- 自作ゲーム内のみ安全
+            end
+        end
+    end
+})
+
+-- Infinite Jump Toggle
+MainTab:CreateToggle({
+    Name = "Inf Jump",
+    CurrentValue = false,
+    Flag = "InfJump",
+    Callback = function(state)
+        local UIS = game:GetService("UserInputService")
+        if state then
+            UIS.InputBegan:Connect(function(input, gameProcessed)
+                if gameProcessed then return end
+                if input.KeyCode == Enum.KeyCode.Space then
+                    local player = game.Players.LocalPlayer
+                    if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+                        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                    end
+                end
+            end)
+        end
+    end
+})
